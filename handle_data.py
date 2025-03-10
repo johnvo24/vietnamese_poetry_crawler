@@ -103,7 +103,8 @@ def fix_data(df, process_i):
 	
 
 def main():
-	df_parts = helper.split_df(file_df, 4)
+	print(f"DATA SHAPE: {file_df.shape}")
+	df_parts = helper.split_df(file_df, NUM_PROCESSES)
 
 	with ProcessPoolExecutor(max_workers=NUM_PROCESSES) as executor:
 		df_results = list(executor.map(fix_data, df_parts, range(NUM_PROCESSES)))

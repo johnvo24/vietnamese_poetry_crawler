@@ -36,8 +36,8 @@ def fix_data(df, process_i):
 	for index, poem in df.iterrows():
 		if not pd.isna(poem["Genre"]): continue
 
-		if request_count%30 == 0 and request_count > 0:
-			print("Rotate proxy after 30 requests...")
+		if request_count%15 == 0 and request_count > 0:
+			print("Rotate proxy after 15 requests...")
 			driver.quit()
 			driver = get_firefox_driver()
 			time.sleep(random.uniform(100, 120))		
@@ -83,7 +83,7 @@ def fix_data(df, process_i):
 					driver = get_firefox_driver()
 					driver.get(url)
 					request_count += 1
-					time.sleep(random.uniform(2, 4))
+					time.sleep(random.uniform(5, 15))
 
 				poem_soup = BeautifulSoup(driver.page_source, "html.parser")
 				summary_section = poem_soup.find("div", class_="summary-section")

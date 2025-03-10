@@ -36,8 +36,15 @@ def fix_data(df, process_i):
 	for index, poem in df.iterrows():
 		if not pd.isna(poem["Genre"]): continue
 
+		if request_count%30 == 0 and request_count > 0:
+			print("Rotate proxy after 30 requests...")
+			driver.quit()
+			driver = get_firefox_driver()
+			time.sleep(random.uniform(100, 120))		
+
 		url = f"https://www.thivien.net/searchpoem.php?Title={str(poem['Title']).lower()}&Author={str(poem['Author']).lower()}&ViewType=1&Country=2"
 		driver.get(url)
+		request_count += 1
 		time.sleep(random.uniform(5, 10))
 
 		# Kiểm tra nếu bị chặn bởi CAPTCHA
@@ -48,6 +55,7 @@ def fix_data(df, process_i):
 			driver.quit()
 			driver = get_firefox_driver()
 			driver.get(url)
+			request_count += 1
 			time.sleep(random.uniform(5, 10))
 		
 		html = driver.page_source
@@ -63,6 +71,7 @@ def fix_data(df, process_i):
 			if a_tag:
 				poem_url = BASE_URL + a_tag['href']
 				driver.get(poem_url)
+				request_count += 1
 				time.sleep(random.uniform(2, 4))
 
 				# Kiểm tra nếu bị chặn bởi CAPTCHA
@@ -73,6 +82,7 @@ def fix_data(df, process_i):
 					driver.quit()
 					driver = get_firefox_driver()
 					driver.get(url)
+					request_count += 1
 					time.sleep(random.uniform(2, 4))
 
 				poem_soup = BeautifulSoup(driver.page_source, "html.parser")
@@ -89,13 +99,6 @@ def fix_data(df, process_i):
 					print(f"P{process_i} - Empty - {url}")
 			else: 
 				print(f"P{process_i} - Empty - {url}")
-
-		request_count += 1
-		if request_count%30 == 0:
-			print("Rotate proxy after 30 requests...")
-			driver.quit()
-			driver = get_firefox_driver()
-			time.sleep(random.uniform(100, 120))
 
 	driver.quit()
 	print(f"P{process_i} - Data handled successfully!")

@@ -10,7 +10,7 @@ import helper
 
 NUM_PROCESSES = 2                                   # <==== CHANGE IT
 GECKO_DRIVER_PATH = '/snap/bin/geckodriver'
-FILE_NAME = 'poems_dataset_proc0_0'
+FILE_NAME = 'poems_dataset_proc0_2'
 BASE_URL = "https://www.thivien.net"
 file_df = pd.read_csv(f'{FILE_NAME}.csv')
 
@@ -26,6 +26,7 @@ def convert_poem_genre(genre):
 	elif genre.lower() == "thơ mới sáu chữ": target = "Sáu chữ"
 	elif genre.lower() == "thơ mới bảy chữ": target = "Bảy chữ"
 	elif genre.lower() == "thơ mới tám chữ": target = "Tám chữ"
+	elif genre.lower() == "thơ tự do": target = "Tự do"
 	else: target = genre
 	return target
 
@@ -38,25 +39,29 @@ def fix_data(df, process_i):
 
 		if request_count%15 == 0 and request_count > 0:
 			print("Rotate proxy after 15 requests...")
-			driver.quit()
-			driver = get_firefox_driver()
-			time.sleep(random.uniform(100, 120))		
+			# driver.quit()
+			# driver = get_firefox_driver()
+			time.sleep(random.uniform(80, 120))
 
 		url = f"https://www.thivien.net/searchpoem.php?Title={str(poem['Title']).lower()}&Author={str(poem['Author']).lower()}&ViewType=1&Country=2"
 		driver.get(url)
 		request_count += 1
-		time.sleep(random.uniform(5, 10))
+		time.sleep(random.uniform(4, 8))
 
 		# Kiểm tra nếu bị chặn bởi CAPTCHA
-		while "xác nhận không phải máy" in driver.page_source.lower():
-			print("🔒 Phát hiện CAPTCHA!!!")
-			time.sleep(random.uniform(60, 65))
-			# Change proxy
-			driver.quit()
-			driver = get_firefox_driver()
+		while "xác nhận không phải máy" in driver.page_source.lower() or "tần suất quá cao" in driver.page_source.lower():
+			if "tần suất quá cao" in driver.page_source.lower():
+				print("🔒 Bị chặn truy cập!!!")
+				time.sleep(random.uniform(300, 360))
+			else:
+				print("🔒 Phát hiện CAPTCHA!!!")
+				time.sleep(random.uniform(60, 65))
+			## Change proxy
+			# driver.quit()
+			# driver = get_firefox_driver()
 			driver.get(url)
 			request_count += 1
-			time.sleep(random.uniform(5, 10))
+			time.sleep(random.uniform(4, 8))
 		
 		html = driver.page_source
 		soup = BeautifulSoup(html, "html.parser")
@@ -75,15 +80,19 @@ def fix_data(df, process_i):
 				time.sleep(random.uniform(2, 4))
 
 				# Kiểm tra nếu bị chặn bởi CAPTCHA
-				while "xác nhận không phải máy" in driver.page_source.lower():
-					print("🔒 Phát hiện CAPTCHA!!!")
-					time.sleep(random.uniform(60, 65))
-					# Change proxy
-					driver.quit()
-					driver = get_firefox_driver()
+				while "xác nhận không phải máy" in driver.page_source.lower() or "tần suất quá cao" in driver.page_source.lower():
+					if "tần suất quá cao" in driver.page_source.lower():
+						print("🔒 Bị chặn truy cập!!!")
+						time.sleep(random.uniform(300, 360))
+					else:
+						print("🔒 Phát hiện CAPTCHA!!!")
+						time.sleep(random.uniform(60, 65))
+					## Change proxy
+					# driver.quit()
+					# driver = get_firefox_driver()
 					driver.get(url)
 					request_count += 1
-					time.sleep(random.uniform(5, 15))
+					time.sleep(random.uniform(4, 8))
 
 				poem_soup = BeautifulSoup(driver.page_source, "html.parser")
 				summary_section = poem_soup.find("div", class_="summary-section")
@@ -107,6 +116,7 @@ def fix_data(df, process_i):
 
 def main():
 	print(f"DATA SHAPE: {file_df.shape}")
+	file_df['Genre'] = file_df['Genre'].astype('object')
 	df_parts = helper.split_df(file_df, NUM_PROCESSES)
 
 	with ProcessPoolExecutor(max_workers=NUM_PROCESSES) as executor:

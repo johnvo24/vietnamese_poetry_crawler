@@ -41,7 +41,7 @@ def fix_data(df, process_i):
 			print(f"P{process_i} - {index} - Existed")
 			continue
 
-		if request_count > 20:
+		if request_count > 15:
 			print("Have a break time after 15 requests...")
 			request_count = 0
 			# driver.quit()

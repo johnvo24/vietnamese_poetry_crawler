@@ -42,7 +42,7 @@ def fix_data(df, process_i):
 			continue
 
 		if str(poem['Author']).lower() in authors_not_in_thivien:
-			print(f"P{process_i} - {index} - Author not found: {str(poem['Author']).lower()}")
+			print(f"ER01: P{process_i} - {index} - Author not found: {str(poem['Author']).lower()}")
 			continue
 		elif str(poem['Author']).lower() not in authors_in_thivien:
 			# SEARCH AUTHOR
@@ -52,7 +52,7 @@ def fix_data(df, process_i):
 			author_soup = BeautifulSoup(driver.page_source, "html.parser")
 			poems_of_author = author_soup.find_all("h4", class_="list-item-header")
 			if len(poems_of_author) < 1:
-				print(f"P{process_i} - {index} - Author not found: {str(poem['Author']).lower()}")
+				print(f"ER02: P{process_i} - {index} - Author not found: {str(poem['Author']).lower()}")
 				authors_not_in_thivien.append(str(poem['Author']).lower())
 				continue
 			else: authors_in_thivien.append(str(poem['Author']).lower())
@@ -89,46 +89,50 @@ def fix_data(df, process_i):
 		
 		poem_links = soup.find_all("h4", class_="list-item-header")
 		if len(poem_links) < 1:
-			print(f"P{process_i} - {index} - Empty - {url}")
+			print(f"ER03: P{process_i} - {index} - Empty - {url}")
 			continue
 		
+		a_tag = None
 		for idx, h4_tag in enumerate(poem_links, start=1):
-			a_tag = h4_tag.find('a')
-			if a_tag:
-				poem_url = BASE_URL + a_tag['href']
-				driver.get(poem_url)
+			a_tg = h4_tag.find('a')
+			if a_tg.get_text().lower() == str(poem["Title"]).lower():
+				a_tag = a_tg
+				break
+		if a_tag:
+			poem_url = BASE_URL + a_tag['href']
+			driver.get(poem_url)
+			request_count += 1
+			time.sleep(random.uniform(2, 4))
+
+			# Kiểm tra nếu bị chặn bởi CAPTCHA
+			while "xác nhận không phải máy" in driver.page_source.lower() or "tần suất quá cao" in driver.page_source.lower():
+				if "tần suất quá cao" in driver.page_source.lower():
+					print("🔒 Bị chặn truy cập!!!")
+					time.sleep(random.uniform(300, 360))
+				else:
+					print("🔒 Phát hiện CAPTCHA!!!")
+					time.sleep(random.uniform(60, 65))
+				## Change proxy
+				# driver.quit()
+				# driver = get_firefox_driver()
+				driver.get(url)
 				request_count += 1
-				time.sleep(random.uniform(2, 4))
+				time.sleep(random.uniform(5, 8))
 
-				# Kiểm tra nếu bị chặn bởi CAPTCHA
-				while "xác nhận không phải máy" in driver.page_source.lower() or "tần suất quá cao" in driver.page_source.lower():
-					if "tần suất quá cao" in driver.page_source.lower():
-						print("🔒 Bị chặn truy cập!!!")
-						time.sleep(random.uniform(300, 360))
-					else:
-						print("🔒 Phát hiện CAPTCHA!!!")
-						time.sleep(random.uniform(60, 65))
-					## Change proxy
-					# driver.quit()
-					# driver = get_firefox_driver()
-					driver.get(url)
-					request_count += 1
-					time.sleep(random.uniform(5, 8))
+			poem_soup = BeautifulSoup(driver.page_source, "html.parser")
+			summary_section = poem_soup.find("div", class_="summary-section")
+			if summary_section:
+				poem_genre = summary_section.find("a").get_text()
+				content_tag = poem_soup.find("div", class_="poem-content")
 
-				poem_soup = BeautifulSoup(driver.page_source, "html.parser")
-				summary_section = poem_soup.find("div", class_="summary-section")
-				if summary_section:
-					poem_genre = summary_section.find("a").get_text()
-					content_tag = poem_soup.find("div", class_="poem-content")
+				df.at[index, "Genre"] = convert_poem_genre(poem_genre)
+				df.at[index, "Edited"] = BeautifulSoup(content_tag.find('p').decode_contents().replace("<br/>", "\n"), "html.parser").get_text()
 
-					df.at[index, "Genre"] = convert_poem_genre(poem_genre)
-					df.at[index, "Edited"] = BeautifulSoup(content_tag.find('p').decode_contents().replace("<br/>", "\n"), "html.parser").get_text()
-
-					print(f"P{process_i} - {index} - {poem['Title']} - {url}")
-				else: 
-					print(f"P{process_i} - {index} - Empty - {url}")
+				print(f"P{process_i} - {index} - {poem['Title']} - {url}")
 			else: 
-				print(f"P{process_i} - {index} - Empty - {url}")
+				print(f"ER04: P{process_i} - {index} - Empty - {url}")
+		else: 
+			print(f"ER05: P{process_i} - {index} - Empty - {url}")
 
 	driver.quit()
 	print(f"P{process_i} - Data handled successfully!")

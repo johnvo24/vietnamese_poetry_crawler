@@ -42,14 +42,14 @@ def fix_data(df, process_i):
 			continue
 
 		if request_count > 15:
-			print("Have a break time after 15 requests...")
+			print(f"P{process_i} Have a break time after 15 requests...")
 			request_count = 0
 			# driver.quit()
 			# driver = get_firefox_driver()
 			time.sleep(random.uniform(80, 120))
 
 		if str(poem['Author']).lower() in authors_not_in_thivien:
-			print(f"ER01: P{process_i} - {index} - Author not found: {str(poem['Author']).lower()}")
+			print(f"P{process_i} - {index} - ER01: Author not found: {str(poem['Author']).lower()}")
 			continue
 		elif str(poem['Author']).lower() not in authors_in_thivien:
 			# SEARCH AUTHOR
@@ -59,7 +59,7 @@ def fix_data(df, process_i):
 			author_soup = BeautifulSoup(driver.page_source, "html.parser")
 			poems_of_author = author_soup.find_all("h4", class_="list-item-header")
 			if len(poems_of_author) < 1:
-				print(f"ER02: P{process_i} - {index} - Author not found: {str(poem['Author']).lower()}")
+				print(f"P{process_i} - {index} - ER02: Author not found: {str(poem['Author']).lower()}")
 				authors_not_in_thivien.append(str(poem['Author']).lower())
 				continue
 			else: authors_in_thivien.append(str(poem['Author']).lower())
@@ -90,7 +90,7 @@ def fix_data(df, process_i):
 		
 		poem_links = soup.find_all("h4", class_="list-item-header")
 		if len(poem_links) < 1:
-			print(f"ER03: P{process_i} - {index} - Empty - {url}")
+			print(f"P{process_i} - {index} - ER03: Empty - {url}")
 			continue
 		
 		a_tag = None
@@ -131,9 +131,9 @@ def fix_data(df, process_i):
 
 				print(f"P{process_i} - {index} - {poem['Title']} - {url}")
 			else: 
-				print(f"ER04: P{process_i} - {index} - Empty - {url}")
+				print(f"P{process_i} - {index} - ER04: Empty - {url}")
 		else: 
-			print(f"ER05: P{process_i} - {index} - Empty - {url}")
+			print(f"P{process_i} - {index} - ER05: Empty - {url}")
 
 	driver.quit()
 	print(f"P{process_i} - Data handled successfully!")

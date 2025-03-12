@@ -10,9 +10,11 @@ import helper
 
 NUM_PROCESSES = 2                                   # <==== CHANGE IT
 GECKO_DRIVER_PATH = '/snap/bin/geckodriver'
-FILE_NAME = 'poems_dataset_proc0_2'
+FILE_NAME = 'poems_dataset_proc0_3'
 BASE_URL = "https://www.thivien.net"
 file_df = pd.read_csv(f'{FILE_NAME}.csv')
+authors_not_in_thivien = pd.read_csv('authors_not_in_thivien.csv')["Author"].to_list()
+authors_in_thivien = pd.read_csv('authors_in_thivien.csv')["Author"].to_list()
 
 def get_firefox_driver():
 	options = Options()
@@ -35,18 +37,37 @@ def fix_data(df, process_i):
 	request_count = 0
 
 	for index, poem in df.iterrows():
-		if not pd.isna(poem["Genre"]): continue
+		if not pd.isna(poem["Genre"]): 
+			print(f"P{process_i} - {index} - Existed")
+			continue
 
-		if request_count%15 == 0 and request_count > 0:
+		if str(poem['Author']).lower() in authors_not_in_thivien:
+			print(f"P{process_i} - {index} - Author not found: {str(poem['Author']).lower()}")
+			continue
+		elif str(poem['Author']).lower() not in authors_in_thivien:
+			# SEARCH AUTHOR
+			driver.get(f"https://www.thivien.net/searchpoem.php?Author={str(poem['Author']).lower()}&ViewType=1&Country=2")
+			request_count += 1
+			time.sleep(random.uniform(5, 8))
+			author_soup = BeautifulSoup(driver.page_source, "html.parser")
+			poems_of_author = author_soup.find_all("h4", class_="list-item-header")
+			if len(poems_of_author) < 1:
+				print(f"P{process_i} - {index} - Author not found: {str(poem['Author']).lower()}")
+				authors_not_in_thivien.append(str(poem['Author']).lower())
+				continue
+			else: authors_in_thivien.append(str(poem['Author']).lower())
+			
+		if request_count%20 == 0 and request_count > 0:
 			print("Rotate proxy after 15 requests...")
 			# driver.quit()
 			# driver = get_firefox_driver()
 			time.sleep(random.uniform(80, 120))
 
+		# SEARCH AUTHOR AND POEM
 		url = f"https://www.thivien.net/searchpoem.php?Title={str(poem['Title']).lower()}&Author={str(poem['Author']).lower()}&ViewType=1&Country=2"
 		driver.get(url)
 		request_count += 1
-		time.sleep(random.uniform(4, 8))
+		time.sleep(random.uniform(5, 8))
 
 		# Kiểm tra nếu bị chặn bởi CAPTCHA
 		while "xác nhận không phải máy" in driver.page_source.lower() or "tần suất quá cao" in driver.page_source.lower():
@@ -61,14 +82,14 @@ def fix_data(df, process_i):
 			# driver = get_firefox_driver()
 			driver.get(url)
 			request_count += 1
-			time.sleep(random.uniform(4, 8))
+			time.sleep(random.uniform(5, 8))
 		
 		html = driver.page_source
 		soup = BeautifulSoup(html, "html.parser")
 		
 		poem_links = soup.find_all("h4", class_="list-item-header")
 		if len(poem_links) < 1:
-			print(f"P{process_i} - Empty - {url}")
+			print(f"P{process_i} - {index} - Empty - {url}")
 			continue
 		
 		for idx, h4_tag in enumerate(poem_links, start=1):
@@ -92,7 +113,7 @@ def fix_data(df, process_i):
 					# driver = get_firefox_driver()
 					driver.get(url)
 					request_count += 1
-					time.sleep(random.uniform(4, 8))
+					time.sleep(random.uniform(5, 8))
 
 				poem_soup = BeautifulSoup(driver.page_source, "html.parser")
 				summary_section = poem_soup.find("div", class_="summary-section")
@@ -105,9 +126,9 @@ def fix_data(df, process_i):
 
 					print(f"P{process_i} - {index} - {poem['Title']} - {url}")
 				else: 
-					print(f"P{process_i} - Empty - {url}")
+					print(f"P{process_i} - {index} - Empty - {url}")
 			else: 
-				print(f"P{process_i} - Empty - {url}")
+				print(f"P{process_i} - {index} - Empty - {url}")
 
 	driver.quit()
 	print(f"P{process_i} - Data handled successfully!")

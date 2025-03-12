@@ -41,6 +41,13 @@ def fix_data(df, process_i):
 			print(f"P{process_i} - {index} - Existed")
 			continue
 
+		if request_count > 20:
+			print("Have a break time after 15 requests...")
+			request_count = 0
+			# driver.quit()
+			# driver = get_firefox_driver()
+			time.sleep(random.uniform(80, 120))
+
 		if str(poem['Author']).lower() in authors_not_in_thivien:
 			print(f"ER01: P{process_i} - {index} - Author not found: {str(poem['Author']).lower()}")
 			continue
@@ -56,12 +63,6 @@ def fix_data(df, process_i):
 				authors_not_in_thivien.append(str(poem['Author']).lower())
 				continue
 			else: authors_in_thivien.append(str(poem['Author']).lower())
-			
-		if request_count%20 == 0 and request_count > 0:
-			print("Rotate proxy after 15 requests...")
-			# driver.quit()
-			# driver = get_firefox_driver()
-			time.sleep(random.uniform(80, 120))
 
 		# SEARCH AUTHOR AND POEM
 		url = f"https://www.thivien.net/searchpoem.php?Title={str(poem['Title']).lower()}&Author={str(poem['Author']).lower()}&ViewType=1&Country=2"
@@ -136,7 +137,11 @@ def fix_data(df, process_i):
 
 	driver.quit()
 	print(f"P{process_i} - Data handled successfully!")
-	return df
+	return [
+		df,
+		pd.DataFrame(authors_in_thivien, columns=["Author"]),
+		pd.DataFrame(authors_not_in_thivien, columns=["Author"])
+	]
 	
 
 def main():
@@ -145,10 +150,20 @@ def main():
 	df_parts = helper.split_df(file_df, NUM_PROCESSES)
 
 	with ProcessPoolExecutor(max_workers=NUM_PROCESSES) as executor:
-		df_results = list(executor.map(fix_data, df_parts, range(NUM_PROCESSES)))
+		results = list(executor.map(fix_data, df_parts, range(NUM_PROCESSES)))
 
+	df_results = [item[0] for item in results]
 	df = pd.concat(df_results, ignore_index=True)
 	df.to_csv(f"{FILE_NAME}_handled.csv", index=False, encoding="utf-8")
+	
+	ait_results = [item[1] for item in results]
+	ait = pd.concat(ait_results, ignore_index=True).drop_duplicates(subset=["Author"])
+	ait.to_csv(f"authors_in_thivien.csv", index=False, encoding="utf-8")
+	
+	anit_results = [item[2] for item in results]
+	anit = pd.concat(anit_results, ignore_index=True).drop_duplicates(subset=["Author"])
+	anit.to_csv(f"authors_not_in_thivien.csv", index=False, encoding="utf-8")
+	
 	
 if __name__ == "__main__":
 	main()

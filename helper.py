@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+import time
+import random
 
 def split_df(df, n):
     """
@@ -26,4 +28,7 @@ def split_df(df, n):
     return parts
 
 def merge_dataframes(parts):
-    return pd.concat(parts, ignore_index=True)
+    return pd.concat(parts, ignore_index=True).drop_duplicates()
+
+def delay():
+    time.sleep(random.uniform(1, 4))

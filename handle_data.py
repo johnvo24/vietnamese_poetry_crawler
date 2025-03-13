@@ -8,9 +8,9 @@ import time
 import random
 import helper
 
-NUM_PROCESSES = 2                                   # <==== CHANGE IT
+NUM_PROCESSES = 1                                  # <==== CHANGE IT
 GECKO_DRIVER_PATH = '/snap/bin/geckodriver'
-FILE_NAME = 'poems_dataset_proc0_3'
+FILE_NAME = 'poems_dataset_proc0_2'
 BASE_URL = "https://www.thivien.net"
 file_df = pd.read_csv(f'{FILE_NAME}.csv')
 authors_not_in_thivien = pd.read_csv('authors_not_in_thivien.csv')["Author"].to_list()
@@ -41,12 +41,12 @@ def fix_data(df, process_i):
 			print(f"P{process_i} - {index} - Existed")
 			continue
 
-		if request_count > 15:
-			print(f"P{process_i} has a break time after 15 requests...")
+		if request_count > 24:
+			print(f"P{process_i} has a break time after 24 requests...")
 			request_count = 0
 			# driver.quit()
 			# driver = get_firefox_driver()
-			time.sleep(random.uniform(80, 120))
+			time.sleep(random.uniform(60, 120))
 
 		if str(poem['Author']).lower() in authors_not_in_thivien:
 			print(f"E1: P{process_i} - {index} - Author not found: {str(poem['Author']).lower()}")
@@ -55,7 +55,7 @@ def fix_data(df, process_i):
 			# SEARCH AUTHOR
 			driver.get(f"https://www.thivien.net/searchpoem.php?Author={str(poem['Author']).lower()}&ViewType=1&Country=2")
 			request_count += 1
-			time.sleep(random.uniform(5, 8))
+			helper.delay()
 			author_soup = BeautifulSoup(driver.page_source, "html.parser")
 			poems_of_author = author_soup.find_all("h4", class_="list-item-header")
 			if len(poems_of_author) < 1:
@@ -68,22 +68,22 @@ def fix_data(df, process_i):
 		url = f"https://www.thivien.net/searchpoem.php?Title={str(poem['Title']).lower()}&Author={str(poem['Author']).lower()}&ViewType=1&Country=2"
 		driver.get(url)
 		request_count += 1
-		time.sleep(random.uniform(5, 8))
+		helper.delay()
 
 		# Kiểm tra nếu bị chặn bởi CAPTCHA
 		while "xác nhận không phải máy" in driver.page_source.lower() or "tần suất quá cao" in driver.page_source.lower():
 			if "tần suất quá cao" in driver.page_source.lower():
 				print("🔒 Bị chặn truy cập!!!")
-				time.sleep(random.uniform(300, 360))
+				time.sleep(random.uniform(180, 240))
+				## Change proxy
+				driver.quit()
+				driver = get_firefox_driver()
 			else:
 				print("🔒 Phát hiện CAPTCHA!!!")
 				time.sleep(random.uniform(60, 65))
-			## Change proxy
-			# driver.quit()
-			# driver = get_firefox_driver()
 			driver.get(url)
 			request_count += 1
-			time.sleep(random.uniform(5, 8))
+			helper.delay()
 		
 		html = driver.page_source
 		soup = BeautifulSoup(html, "html.parser")
@@ -103,22 +103,22 @@ def fix_data(df, process_i):
 			poem_url = BASE_URL + a_tag['href']
 			driver.get(poem_url)
 			request_count += 1
-			time.sleep(random.uniform(2, 4))
+			helper.delay()
 
 			# Kiểm tra nếu bị chặn bởi CAPTCHA
 			while "xác nhận không phải máy" in driver.page_source.lower() or "tần suất quá cao" in driver.page_source.lower():
 				if "tần suất quá cao" in driver.page_source.lower():
 					print("🔒 Bị chặn truy cập!!!")
-					time.sleep(random.uniform(300, 360))
+					time.sleep(random.uniform(180, 240))
+					## Change proxy
+					driver.quit()
+					driver = get_firefox_driver()
 				else:
 					print("🔒 Phát hiện CAPTCHA!!!")
 					time.sleep(random.uniform(60, 65))
-				## Change proxy
-				# driver.quit()
-				# driver = get_firefox_driver()
 				driver.get(url)
 				request_count += 1
-				time.sleep(random.uniform(5, 8))
+				helper.delay()
 
 			poem_soup = BeautifulSoup(driver.page_source, "html.parser")
 			summary_section = poem_soup.find("div", class_="summary-section")

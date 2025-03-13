@@ -2,12 +2,12 @@ import helper
 import pandas as pd
 import os
 
+## SPLIT DATASET TO N PARTS
 # df = pd.read_csv("poems_dataset_proc0.csv")
 # parts = helper.split_df(df, 10)
 # for i in range(len(parts)):
 #     parts[i].to_csv(f"poems_dataset_proc0_{i}.csv", index=False, encoding="utf-8")
 
-# parts[100].to_csv(f"poems_dataset_proc0_{0}.csv", index=False, encoding="utf-8")
 
 # df0 = pd.read_csv("poems_dataset_proc0_0_handled.csv")
 # df1 = pd.read_csv("poems_dataset_proc0_1_handled.csv")
@@ -17,11 +17,11 @@ import os
 # pd.DataFrame(authors_not_in_thivien, columns=["Author"]).to_csv("authors_in_thivien.csv", index=False)
 # print(df.count("index")["Genre"])
 
-# list = pd.read_csv("authors_in_thivien.csv")['Author'].to_list()
-# list.append("hommie")
-# pd.DataFrame(list, columns=["Author"]).to_csv("authors_in_thivien_1.csv", index=False)
-
-if os.path.exists("authors_in_thivien_1.csv"):  
-    os.remove("authors_in_thivien_1.csv")  
-    print(f"Đã xóa {'authors_in_thivien_1.csv'}")  
-
+dfs = []
+for i in range(0, 5):
+  df_i = pd.read_csv(f"poems_dataset_proc0_{i}_handled.csv")
+  print(len(df_i[df_i["Genre"].notna() & (df_i["Genre"] != "Xóa")]))
+  dfs.append(df_i)
+df = helper.merge_dataframes(dfs)
+df = df[df["Genre"].notna() & (df["Genre"] != "Xóa")].drop_duplicates(["Edited"])
+df.to_csv("dataset_handled/poem_dataset_handled")

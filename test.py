@@ -19,9 +19,14 @@ import os
 
 dfs = []
 for i in range(0, 5):
-  df_i = pd.read_csv(f"poems_dataset_proc0_{i}_handled.csv")
-  print(len(df_i[df_i["Genre"].notna() & (df_i["Genre"] != "Xóa")]))
-  dfs.append(df_i)
+  try:
+    df_i = pd.read_csv(f"poems_dataset_proc0_{i}_handled.csv")
+    print(len(df_i[df_i["Genre"].notna() & (df_i["Genre"] != "Xóa")]))
+    dfs.append(df_i)
+  except Exception:
+    print("Invalid")
+    continue
 df = helper.merge_dataframes(dfs)
 df = df[df["Genre"].notna() & (df["Genre"] != "Xóa")].drop_duplicates(["Edited"])
-df.to_csv("dataset_handled/poem_dataset_handled")
+print(len(df))
+df.to_csv("handled_dataset/poems_dataset_processed.csv", index=False)

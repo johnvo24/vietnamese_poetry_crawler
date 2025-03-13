@@ -10,7 +10,7 @@ import helper
 
 NUM_PROCESSES = 1                                  # <==== CHANGE IT
 GECKO_DRIVER_PATH = '/snap/bin/geckodriver'
-FILE_NAME = 'poems_dataset_proc0_2'
+FILE_NAME = 'poems_dataset_proc0_0'
 BASE_URL = "https://www.thivien.net"
 file_df = pd.read_csv(f'{FILE_NAME}.csv')
 authors_not_in_thivien = pd.read_csv('authors_not_in_thivien.csv')["Author"].to_list()
@@ -145,6 +145,7 @@ def fix_data(df, process_i):
 	
 
 def main():
+	print("FIXING DATASET")
 	print(f"DATA SHAPE: {file_df.shape}")
 	file_df['Genre'] = file_df['Genre'].astype('object')
 	df_parts = helper.split_df(file_df, NUM_PROCESSES)

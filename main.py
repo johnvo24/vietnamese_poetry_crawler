@@ -44,7 +44,7 @@ def merge_dataset(from_, to_, file_="poems_dataset_proc0"):
 ## Chia file poems_dataset_proc1.csv thành: từ "poems_dataset_proc1_0.csv" đến "poems_dataset_proc1_5.csv"
 ## Thì dùng: split_dataset(file_="poems_dataset_proc1", n_parts_=6)
 
-merge_dataset(from_=0, to_=5, file_="poems_dataset_proc0")
+# merge_dataset(from_=6, to_=9, file_="poems_dataset_proc0")
 ## >>> Example:
 ## merge file: từ "poems_dataset_proc0_0_handled.csv" đến "poems_dataset_proc0_5_handled.csv"
 ## Thì dùng: merge_dataset(from_=0, to_=5, file_="poems_dataset_proc0")

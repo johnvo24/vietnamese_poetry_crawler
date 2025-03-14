@@ -10,7 +10,7 @@ import helper
 
 NUM_PROCESSES = 1                                  # <==== CHANGE IT
 GECKO_DRIVER_PATH = '/snap/bin/geckodriver'
-FILE_NAME = 'poems_dataset_proc0_5'
+FILE_NAME = 'poems_dataset_proc0_8'
 BASE_URL = "https://www.thivien.net"
 file_df = pd.read_csv(f'{FILE_NAME}.csv')
 authors_not_in_thivien = pd.read_csv('authors_not_in_thivien.csv')["Author"].to_list()

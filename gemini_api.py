@@ -21,6 +21,6 @@ class GeminiAI():
 #     print(generate(prompt="Viết bài thơ lục bát tặng mẹ ngày 8/3").text)
 #     time.sleep(random.uniform(1, 2))
     
-# geminiAI = GeminiAI()
-# print(geminiAI.generate("1 + 1 bằng bao nhiêu?").text)
-# print(geminiAI.generate("Bình phương kết quả trên").text)
+geminiAI = GeminiAI()
+print(geminiAI.generate("1 + 1 bằng bao nhiêu?").text)
+print(geminiAI.generate("Bình phương kết quả trên").text)

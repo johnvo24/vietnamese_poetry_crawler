@@ -9,15 +9,7 @@ def split_dataset(file_, n_parts_):
   for i in range(len(parts)):
       parts[i].to_csv(f"{file_}_{i}.csv", index=False, encoding="utf-8")
 
-
-# df0 = pd.read_csv("poems_dataset_proc0_0_handled.csv")
-# df1 = pd.read_csv("poems_dataset_proc0_1_handled.csv")
-# df2 = pd.read_csv("poems_dataset_proc0_2_handled.csv")
-# df = pd.concat([df0, df1, df2])
-# authors_not_in_thivien = df.loc[df["Genre"].notna(), "Author"].dropna().str.lower().unique()
-# pd.DataFrame(authors_not_in_thivien, columns=["Author"]).to_csv("authors_in_thivien.csv", index=False)
-# print(df.count("index")["Genre"])
-
+## MERGE HANDLED DATASET
 def merge_dataset(from_, to_, file_="poems_dataset_proc0"):
   df0_processed = pd.read_csv(f"handled_dataset/poems_dataset_processed.csv")
   df0_raw = pd.read_csv(f"handled_dataset/poems_dataset_raw.csv")
@@ -52,7 +44,7 @@ def merge_dataset(from_, to_, file_="poems_dataset_proc0"):
 ## Chia file poems_dataset_proc1.csv thành: từ "poems_dataset_proc1_0.csv" đến "poems_dataset_proc1_5.csv"
 ## Thì dùng: split_dataset(file_="poems_dataset_proc1", n_parts_=6)
 
-# merge_dataset(from_=0, to_=5, file_="poems_dataset_proc0")
+merge_dataset(from_=0, to_=5, file_="poems_dataset_proc0")
 ## >>> Example:
 ## merge file: từ "poems_dataset_proc0_0_handled.csv" đến "poems_dataset_proc0_5_handled.csv"
 ## Thì dùng: merge_dataset(from_=0, to_=5, file_="poems_dataset_proc0")

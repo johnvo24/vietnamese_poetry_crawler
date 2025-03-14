@@ -3,10 +3,11 @@ import pandas as pd
 import os
 
 ## SPLIT DATASET TO N PARTS
-# df = pd.read_csv("poems_dataset_proc0_5.csv")
-# parts = helper.split_df(df, 6)
-# for i in range(len(parts)):
-#     parts[i].to_csv(f"poems_dataset_proc0_{i}.csv", index=False, encoding="utf-8")
+def split_dataset(file_, n_parts_):
+  df = pd.read_csv(f"{file_}.csv")
+  parts = helper.split_df(df, n_parts_)
+  for i in range(len(parts)):
+      parts[i].to_csv(f"{file_}_{i}.csv", index=False, encoding="utf-8")
 
 
 # df0 = pd.read_csv("poems_dataset_proc0_0_handled.csv")
@@ -43,6 +44,15 @@ def merge_dataset(from_, to_, file_="poems_dataset_proc0"):
   print("\n... Saved dataset")
 
   print(f"New data in TARGET FILE:\n{len(df1_processed)} - handled_dataset/poems_dataset_processed.csv")
-  print(f"{len(df1_raw)} - handled_dataset/poems_dataset_raw.csv\n")
+  print(f"{len(df1_raw)} - handled_dataset/poems_dataset_raw.csv")
 
-merge_dataset(0, 4)
+
+# split_dataset(file_="poems_dataset_proc1", n_parts_=6)
+## >>> Example:
+## Chia file poems_dataset_proc1.csv thành: từ "poems_dataset_proc1_0.csv" đến "poems_dataset_proc1_5.csv"
+## Thì dùng: split_dataset(file_="poems_dataset_proc1", n_parts_=6)
+
+# merge_dataset(from_=0, to_=5, file_="poems_dataset_proc0")
+## >>> Example:
+## merge file: từ "poems_dataset_proc0_0_handled.csv" đến "poems_dataset_proc0_5_handled.csv"
+## Thì dùng: merge_dataset(from_=0, to_=5, file_="poems_dataset_proc0")

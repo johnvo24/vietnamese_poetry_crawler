@@ -75,4 +75,4 @@ handle_dataset(from_=0, to_=20, file_="poems_dataset_proc1", driver_type_="firef
 ## Thì dùng: merge_dataset(from_=0, to_=5, file_="poems_dataset_proc0")
 
 # df = pd.read_csv("poems_dataset_proc1_0.csv")
-# print(len(df))
+# print(print(df.loc[145:149]))

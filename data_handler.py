@@ -33,7 +33,7 @@ class DataHandler:
             service = ChromeService(self.driver_path["chrome"])
             return webdriver.Chrome(service=service, options=options)
 
-    def convert_poem_genre(genre):
+    def convert_poem_genre(self, genre):
       if genre.lower() == "thơ mới bốn chữ": target = "Bốn chữ"
       elif genre.lower() == "thơ mới năm chữ": target = "Năm chữ"
       elif genre.lower() == "thơ mới sáu chữ": target = "Sáu chữ"

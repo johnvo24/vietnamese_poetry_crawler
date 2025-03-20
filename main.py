@@ -59,7 +59,7 @@ def merge_dataset(from_, to_, file_="poems_dataset_proc0"):
   print(f"{len(df1_raw)} - handled_dataset/poems_dataset_raw.csv")
 
 
-# split_dataset(file_="poems_dataset_proc3", n_parts_=20)
+split_dataset(file_="handled_dataset/poems_dataset_raw", n_parts_=2)
 ## >>> Example:
 ## Chia file poems_dataset_proc1.csv thành: từ "poems_dataset_proc1_0.csv" đến "poems_dataset_proc1_5.csv"
 ## Thì dùng: split_dataset(file_="poems_dataset_proc1", n_parts_=6)
@@ -69,7 +69,7 @@ def merge_dataset(from_, to_, file_="poems_dataset_proc0"):
 ## Xử lý file: từ "poems_dataset_proc1_0.csv" đến "poems_dataset_proc1_5.csv" thành "poems_dataset_proc1_0_handled.csv" ... "poems_dataset_proc1_5_handled.csv"
 ## Thì dùng: handle_dataset(from_=0, to_=5, file_="poems_dataset_proc1", driver_type_="firefox", num_processes_=1, allow_overwrite=False)
 
-merge_dataset(from_=0, to_=19, file_="poems_dataset_proc3")
+# merge_dataset(from_=0, to_=19, file_="poems_dataset_proc3")
 ## >>> Example:
 ## merge file: từ "poems_dataset_proc0_0_handled.csv" đến "poems_dataset_proc0_5_handled.csv"
 ## Thì dùng: merge_dataset(from_=0, to_=5, file_="poems_dataset_proc0")

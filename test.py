@@ -1,11 +1,4 @@
-from underthesea import word_tokenize, ner
+import pandas as pd
 
-# Ví dụ bài thơ có địa danh
-poem = "Đừng lặng im"
-
-# Tokenize và nhận diện thực thể
-tokens = word_tokenize(poem)
-entities = ner(poem)
-
-print("Tokens:", tokens)
-print("Entities:", entities)
+df = pd.read_csv('handled_dataset/poems_dataset_raw.csv')
+print(len(df))

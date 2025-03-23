@@ -46,16 +46,22 @@ class DataCrawler:
     else: target = genre
     return target
   
-  def crawl_data(self, process_i):
+  def crawl_data(self, start_author_, amount_):
     data = []
     driver = self.get_driver()
     request_count = 0
     poem_count = 0
+    started = False
 
     for _, author_row in self.authors_for_searching.iterrows():
       author = str(author_row['Author'])
+      if not started:
+        if author != start_author_:
+          continue
+        else:
+          started = True 
       if request_count > 24:
-        print(f"P{process_i} has a break time after 24 requests...")
+        print(f"has a break time after 24 requests...")
         request_count = 0
         time.sleep(random.uniform(60, 120))
       
@@ -84,10 +90,10 @@ class DataCrawler:
         author_soup = BeautifulSoup(driver.page_source, "html.parser")
         poems_of_author = author_soup.find_all("div", class_="list-item-detail")
         if len(poems_of_author) < 1:
-          print(f"E1: P{process_i} - Author not found: {author}")
+          print(f"E1: Author not found: {author}")
           continue
 
-        print(f"#####: P{process_i} - Author: {author}")
+        print(f"#####: Author: {author}")
         for poem in poems_of_author:
           a_tag = poem.find_all("a")[2]
           if a_tag.get_text().lower() != author: continue
@@ -120,13 +126,13 @@ class DataCrawler:
             for poem_tag in poem_tag_list:
               poem_title = poem_tag.get_text()
               if poem_title in self.poems_dataset_processed["Title"].to_list(): 
-                print(f"E: P{process_i} - {poem_title} is already!")
+                print(f"E: {author} - {poem_title} is already!")
                 continue
 
               poem_url = f"{self.base_url}/{poem_tag['href']}"
               driver.get(poem_url)
               request_count +=1
-              helper.delay()
+              helper.delay(2, 5)
 
               # Kiểm tra nếu bị chặn bởi CAPTCHA
               while "xác nhận không phải máy" in driver.page_source.lower() or "tần suất quá cao" in driver.page_source.lower():
@@ -157,21 +163,39 @@ class DataCrawler:
                     'URL': poem_url
                 })
                 poem_count += 1
-                print(f"OK: P{process_i} - {poem_count} - {poem_title}")
+                print(f"OK: {poem_count} - {author} - {poem_title}")
+                if poem_count >= amount_:
+                  driver.quit()
+                  print(f"Data crawled successfully!")
+                  return pd.DataFrame(data=data)
           break
 
     driver.quit()
-    print(f"P{process_i} - Data crawled successfully!")
+    print(f"Data crawled successfully!")
     return pd.DataFrame(data=data)
 
-  def start(self):
+  def start(self, start_author, num_loop=10, amount=250):
       print(f"==> Crawling dataset... ")
-      
-      with ProcessPoolExecutor(max_workers=self.num_processes) as executor:
-        results = list(executor.map(self.crawl_data, range(self.num_processes)))
+      start_author_ = start_author
+      data_0 = []
+      for i in range(0, num_loop):
+        print(f"############### LOOP {i+1} ###############")
+        try:
+          data_0 = pd.read_csv(f"handled_dataset/poems_dataset_processed_0.csv")
+        except ValueError:
+          pass
+        print(f"Dataset: {len(data_0)}")
+        if data_0:
+          start_author_ = str(data_0.loc[-1]['Author']).lower()
+        else:
+          data_0 = pd.DataFrame(data=[])
+        
+        result = self.crawl_data(start_author_=start_author_, amount_=amount)
 
-      df = pd.concat(results, ignore_index=True)
-      df.to_csv(f"handled_dataset/poems_dataset_processed_0.csv", index=False, encoding="utf-8")
+        df = helper.merge_dataframes([data_0, result])
+        df.to_csv(f"handled_dataset/poems_dataset_processed_0.csv", index=False, encoding="utf-8")
+        print("ZZZ... Waiting for saving dataset")
+        helper.delay(30, 35)
       
 crawler = DataCrawler(driver_type="firefox", num_processes=1)
-crawler.start()
+crawler.start(start_author='hư vô', num_loop=10, amount=500)

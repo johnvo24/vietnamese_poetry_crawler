@@ -30,5 +30,5 @@ def split_df(df, n):
 def merge_dataframes(parts):
     return pd.concat(parts, ignore_index=True).drop_duplicates()
 
-def delay():
-    time.sleep(random.uniform(1, 4))
+def delay(from_=1, to_=4):
+    time.sleep(random.uniform(from_, to_))

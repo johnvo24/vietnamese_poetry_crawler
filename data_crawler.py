@@ -122,8 +122,8 @@ class DataCrawler:
         author_page_soup = BeautifulSoup(driver.page_source, "html.parser")
         poem_group_lists = author_page_soup.find_all("div", class_="poem-group-list")
 
-        translated_poem_group_title = author_page_soup.find("h4", class_="poem-group-title", string="Thơ dịch tác giả khác")
-        if translated_poem_group_title: source_line_limit = translated_poem_group_title.sourceline;
+        translated_poem_group_title = [h4 for h4 in author_page_soup.find_all("h4", class_="poem-group-title") if "thơ dịch" in h4.get_text().lower()]
+        if translated_poem_group_title: source_line_limit = translated_poem_group_title[0].sourceline;
         else: source_line_limit = 99999
         print(f"Line limit: {source_line_limit}")
 

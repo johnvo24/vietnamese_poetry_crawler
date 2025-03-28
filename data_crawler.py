@@ -77,8 +77,8 @@ class DataCrawler:
           print("🔒 Bị chặn truy cập!!!")
           time.sleep(random.uniform(180, 240))
           ## Change proxy
-          driver.quit()
-          driver = self.get_driver()
+          # driver.quit()
+          # driver = self.get_driver()
         else:
           print("🔒 Phát hiện CAPTCHA!!!")
           time.sleep(random.uniform(60, 65))
@@ -109,8 +109,8 @@ class DataCrawler:
             print("🔒 Bị chặn truy cập!!!")
             time.sleep(random.uniform(180, 240))
             ## Change proxy
-            driver.quit()
-            driver = self.get_driver()
+            # driver.quit()
+            # driver = self.get_driver()
           else:
             print("🔒 Phát hiện CAPTCHA!!!")
             time.sleep(random.uniform(60, 65))
@@ -150,8 +150,8 @@ class DataCrawler:
                 print("🔒 Bị chặn truy cập!!!")
                 time.sleep(random.uniform(180, 240))
                 ## Change proxy
-                driver.quit()
-                driver = self.get_driver()
+                # driver.quit()
+                # driver = self.get_driver()
               else:
                 print("🔒 Phát hiện CAPTCHA!!!")
                 time.sleep(random.uniform(60, 65))

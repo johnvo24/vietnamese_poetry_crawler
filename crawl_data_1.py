@@ -9,7 +9,7 @@ import string
 import random
 import csv
 
-GECKO_DRIVER_PATH = '/snap/bin/geckodriver'
+GECKO_DRIVER_PATH = '/usr/local/bin/geckodriver'
 
 # Khởi tạo Firefox WebDriver ở chế độ headless
 options = Options()

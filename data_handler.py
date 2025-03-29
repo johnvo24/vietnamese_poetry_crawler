@@ -16,7 +16,7 @@ class DataHandler:
         self.base_url = "https://www.thivien.net"
         self.driver_type = driver_type
         self.driver_path = {
-            "firefox": "/snap/bin/geckodriver",
+            "firefox": "/usr/local/bin/geckodriver",
             "chrome": "C:/Webdriver/chromedriver-win64/chromedriver.exe"
         }
         

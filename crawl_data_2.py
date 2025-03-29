@@ -8,7 +8,7 @@ import time
 import csv
 from concurrent.futures import ProcessPoolExecutor
 
-GECKO_DRIVER_PATH = '/snap/bin/geckodriver'
+GECKO_DRIVER_PATH = '/usr/local/bin/geckodriver'
 
 # Variables
 BASE_URL = "https://poem.tkaraoke.com"

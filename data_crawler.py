@@ -16,7 +16,7 @@ class DataCrawler:
     self.base_url = "https://www.thivien.net"
     self.driver_type = driver_type
     self.driver_path = {
-        "firefox": "/snap/bin/geckodriver",
+        "firefox": "/usr/local/bin/geckodriver",
         "chrome": "C:/Webdriver/chromedriver-win64/chromedriver.exe"
     }
     
@@ -142,7 +142,7 @@ class DataCrawler:
             poem_url = f"{self.base_url}/{poem_tag['href']}"
             driver.get(poem_url)
             request_count +=1
-            helper.delay(5, 10)
+            helper.delay(3, 5)
 
             # Kiểm tra nếu bị chặn bởi CAPTCHA
             while "xác nhận không phải máy" in driver.page_source.lower() or "tần suất quá cao" in driver.page_source.lower():

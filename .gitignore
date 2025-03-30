@@ -1,3 +1,4 @@
 venv
 dataset_crawled/*
 *cache*
+handled_dataset/poems_dataset_processed_0.csv

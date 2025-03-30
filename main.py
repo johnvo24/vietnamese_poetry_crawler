@@ -74,7 +74,7 @@ def crawl_dataset(driver_type="firefox", start_author='hư vô'):
 ## Xử lý file: từ "poems_dataset_proc1_0.csv" đến "poems_dataset_proc1_5.csv" thành "poems_dataset_proc1_0_handled.csv" ... "poems_dataset_proc1_5_handled.csv"
 ## Thì dùng: handle_dataset(from_=0, to_=5, file_="poems_dataset_proc1", driver_type_="firefox", num_processes_=1, allow_overwrite=False)
 
-crawl_dataset(driver_type="firefox", start_author='hư vô')
+crawl_dataset(driver_type="chrome", start_author='nguyên hùng')
 # Crawl dữ liệu bắt đầu từ start_author ở trong file authors_in_thivien.csv
 
 # merge_dataset(from_=0, to_=19, file_="poems_dataset_proc3")

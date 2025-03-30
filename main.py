@@ -2,6 +2,7 @@ import helper
 import pandas as pd
 import os
 from data_handler import DataHandler
+from data_crawler import DataCrawler
 
 ## SPLIT DATASET TO N PARTS
 def split_dataset(file_, n_parts_):
@@ -58,8 +59,12 @@ def merge_dataset(from_, to_, file_="poems_dataset_proc0"):
   print(f"New data in TARGET FILE:\n{len(df1_processed)} - handled_dataset/poems_dataset_processed.csv")
   print(f"{len(df1_raw)} - handled_dataset/poems_dataset_raw.csv")
 
+def crawl_dataset(driver_type="firefox", start_author='hư vô'):
+  crawler = DataCrawler(driver_type=driver_type, num_processes=1)
+  crawler.start(start_author=start_author, num_loop=10, amount=500)
 
-split_dataset(file_="poems_dataset_proc3", n_parts_=20)
+
+# split_dataset(file_="poems_dataset_proc3", n_parts_=20)
 ## >>> Example:
 ## Chia file poems_dataset_proc1.csv thành: từ "poems_dataset_proc1_0.csv" đến "poems_dataset_proc1_5.csv"
 ## Thì dùng: split_dataset(file_="poems_dataset_proc1", n_parts_=6)
@@ -68,6 +73,9 @@ split_dataset(file_="poems_dataset_proc3", n_parts_=20)
 ## >>> Example:
 ## Xử lý file: từ "poems_dataset_proc1_0.csv" đến "poems_dataset_proc1_5.csv" thành "poems_dataset_proc1_0_handled.csv" ... "poems_dataset_proc1_5_handled.csv"
 ## Thì dùng: handle_dataset(from_=0, to_=5, file_="poems_dataset_proc1", driver_type_="firefox", num_processes_=1, allow_overwrite=False)
+
+crawl_dataset(driver_type="firefox", start_author='hư vô')
+# Crawl dữ liệu bắt đầu từ start_author ở trong file authors_in_thivien.csv
 
 # merge_dataset(from_=0, to_=19, file_="poems_dataset_proc3")
 ## >>> Example:

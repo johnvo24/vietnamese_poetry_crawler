@@ -208,6 +208,3 @@ class DataCrawler:
       df.to_csv(f"handled_dataset/poems_dataset_processed_0.csv", index=False, encoding="utf-8")
       print("ZZZ... Waiting for saving dataset")
       helper.delay(30, 35)
-      
-crawler = DataCrawler(driver_type="firefox", num_processes=1)
-crawler.start(start_author='hư vô', num_loop=10, amount=500)

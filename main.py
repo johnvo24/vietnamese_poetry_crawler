@@ -100,8 +100,6 @@ def generate_original_poem(file_name):
   print("Done!")
 
 
-
-
 # split_dataset(file_="poems_dataset_proc3", n_parts_=20)
 ## >>> Example:
 ## Chia file poems_dataset_proc1.csv thành: từ "poems_dataset_proc1_0.csv" đến "poems_dataset_proc1_5.csv"

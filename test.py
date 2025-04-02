@@ -17,6 +17,7 @@ poem_genres = [
   "Ngũ ngôn tứ tuyệt",
 ]
 
-df = pd.read_csv('handled_dataset/poems_dataset_processed.csv')
-df_filtered = df[df["Genre"].isin(poem_genres)]
-print(df_filtered["Genre"].unique())
+df = pd.read_csv('handled_dataset/poems_dataset_processed_0.csv')
+# df_filtered = df[df["Genre"].isin(poem_genres)]
+# print(df_filtered["Genre"].unique())
+print(len(df))

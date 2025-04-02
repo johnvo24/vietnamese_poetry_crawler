@@ -1,7 +1,22 @@
 import pandas as pd
 
-# df = pd.read_csv('handled_dataset/poems_dataset_processed.csv')
-# print(len(df))
+poem_genres = [
+  "Hai chữ",
+  "Bốn chữ",
+  "Năm chữ",
+  "Sáu chữ",
+  "Bảy chữ",
+  "Tám chữ",
+  "Lục bát",
+  "Song thất lục bát",
+  "Thất ngôn tứ tuyệt",
+  "Thất ngôn bát cú",
+  "Thất ngôn cổ phong",
+  "Ngũ ngôn bát cú",
+  "Ngũ ngôn cổ phong",
+  "Ngũ ngôn tứ tuyệt",
+]
 
-a = [1]
-print(a[0] if a else 0)
+df = pd.read_csv('handled_dataset/poems_dataset_processed.csv')
+df_filtered = df[df["Genre"].isin(poem_genres)]
+print(df_filtered["Genre"].unique())

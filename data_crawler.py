@@ -142,7 +142,7 @@ class DataCrawler:
             poem_url = f"{self.base_url}/{poem_tag['href']}"
             driver.get(poem_url)
             request_count +=1
-            helper.delay(3, 5)
+            helper.delay(3, 6)
 
             # Kiểm tra nếu bị chặn bởi CAPTCHA
             while "xác nhận không phải máy" in driver.page_source.lower() or "tần suất quá cao" in driver.page_source.lower():

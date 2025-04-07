@@ -1,0 +1,1 @@
+<a href="https://aistudio.google.com/apikey">GET GEMINI API KEY</a>

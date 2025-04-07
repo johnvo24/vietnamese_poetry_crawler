@@ -16,6 +16,17 @@ class GeminiAI():
             ),
         )
         return response
+    
+    def correct_spelling(self, prompt):
+        response =  self.client.models.generate_content(
+            model='gemini-2.0-flash',
+            contents=f"Yêu cầu: Bây giờ tôi đưa bài thơ hoàn chỉnh. Hãy làm cho nó có lỗi sao cho vẫn tự nhiên giống con người nhất. Các lỗi gồm: Vần, Âm luật, Ngữ pháp, Ngữ nghĩa, Dấu câu.\nHãy tạo thơ lỗi theo yêu cầu (giữ nguyên số lượng từ mỗi câu) và chỉ trả về phản hồi nội dung thơ lỗi (thơ lỗi phải khác thơ hoàn chỉnh): {prompt}",
+            config=types.GenerateContentConfig(
+                temperature=0.7,
+                max_output_tokens=1000
+            ),
+        )
+        return response
 
 # for i in range(0, 1):
 #     print(generate(prompt="Viết bài thơ lục bát tặng mẹ ngày 8/3").text)

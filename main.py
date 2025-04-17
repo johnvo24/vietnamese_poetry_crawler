@@ -99,7 +99,36 @@ def generate_original_poem(file_name):
   df.to_csv(file_name, index=False, encoding="utf-8")
   print("Done!")
 
+api_keys = [
+  "AIzaSyD991kwtJLw_F8JP3nDdynbxyhe7RdhQys",
+  "AIzaSyCEDGfEFguIC3fFEjUT7O7UyaOSycv14_8",
+  "AIzaSyCmhIkgo8IAEjs4q1tUOHT-uBrhjtcRM_I",
+  "AIzaSyC1JrmLsFUIEnUOWGmVoq0ThSlPF1MBVdk",
+  "AIzaSyBqRsLokiL_86y4-lItQskez0hAAMvTR1E"
+]
 
+def generate_edited_poem(file_name, api_keys):
+  gemini_ai = GeminiAI(api_keys=api_keys)
+  df = pd.read_csv(file_name)
+
+  for index, row in df.iterrows():
+    if row['edited'] is None:
+      print(f"ER: {index} - No data!")
+      continue
+    if pd.isna(row["edited_0"]):
+      try:
+        df.at[index, "edited_0"] = gemini_ai.correct_spelling(prompt=row["edited"]).text
+        print(df.at[index, "edited_0"])
+        print(f"✅ OK: {index} - Successful!")
+        helper.delay(2, 5)
+      except Exception as e:
+        print(f"❌ ER: {index} - {e}")
+        break
+
+  df.to_csv(file_name, index=False, encoding="utf-8")
+  print("Done!")
+
+generate_edited_poem('poems_dataset_lucbat.csv', api_keys)
 # split_dataset(file_="poems_dataset_proc3", n_parts_=20)
 ## >>> Example:
 ## Chia file poems_dataset_proc1.csv thành: từ "poems_dataset_proc1_0.csv" đến "poems_dataset_proc1_5.csv"
@@ -115,7 +144,7 @@ def generate_original_poem(file_name):
 ## merge file: từ "poems_dataset_proc0_0_handled.csv" đến "poems_dataset_proc0_5_handled.csv"
 ## Thì dùng: merge_dataset(from_=0, to_=5, file_="poems_dataset_proc0")
 
-crawl_dataset(driver_type="firefox", start_author='hư vô')
+#crawl_dataset(driver_type="firefox", start_author='hư vô')
 # Crawl dữ liệu bắt đầu từ start_author ở trong file authors_in_thivien.csv
 
 # generate_original_poem(file_name='handled_dataset/poems_dataset_processed.csv')
